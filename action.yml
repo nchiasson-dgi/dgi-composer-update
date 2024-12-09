@@ -1,0 +1,38 @@
+name: Update Discoverygarden Composer Modules
+author: discoverygarden
+description: Updates composer with latest versions of discoverygarden modules.
+
+inputs:
+  github-token:
+    description: The github token.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Installing composer requirements
+      shell: bash
+      run: composer install
+      working-directory: ${{ github.action_path }}
+    - name: Running upgrade
+      shell: bash
+      run: >
+        composer outdated -D -m --locked --format=json
+        | jq '.locked[] | select(.name | startswith("discoverygarden/")) | .name' -r
+        | xargs -I {} -n1 composer update {} --with-dependencies
+    - name: Commit and push any changes
+      if: ${{ git status --porcelian }}
+      shell: bash
+      run: |
+        git switch --create fix/update-composer
+        git add composer.*
+        git commit -m 'Updating discoverygarden modules with latest tags'
+        git push origin fix/update-composer
+    - name: Create PR
+      uses: discoverygarden/create-pr@v1
+      with:
+        title: "Updating composer modules"
+        base: fix/update-composer
+        head: main
+        automerge: false
+        token: ${{ inputs.github-token }}
