@@ -15,13 +15,22 @@ runs:
       run: composer install
       working-directory: ${{ github.action_path }}
     - name: Running upgrade
+      id: upgrade
       shell: bash
       run: >
         composer outdated -D -m --locked --format=json
         | jq '.locked[] | select(.name | startswith("discoverygarden/")) | .name' -r
         | xargs -I {} -n1 composer update {} --with-dependencies
+    - name: Confirm there are changes
+      id: confirm
+      shell: bash
+      run: |
+        if [[ -n $(git status --porcelian) ]]; then
+          echo "UPDATES=true" >> "$GITHUB_ENV";
+        fi
     - name: Commit and push any changes
-      if: ${{ git status --porcelian }}
+      id: commit
+      if: env.UPDATES == 'true'
       shell: bash
       run: |
         git switch --create fix/update-composer
@@ -29,6 +38,7 @@ runs:
         git commit -m 'Updating discoverygarden modules with latest tags'
         git push origin fix/update-composer
     - name: Create PR
+      needs: [upgrade, confirm, commit]
       uses: discoverygarden/create-pr@v1
       with:
         title: "Updating composer modules"
