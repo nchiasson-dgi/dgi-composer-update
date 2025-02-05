@@ -16,7 +16,7 @@ runs:
     - name: Installing composer requirements
       shell: bash
       run: |
-        # Configure access and install our module.
+        # Configure access if necessary.
         if [ -n "${{ inputs.composer-auth }}" ] ; then
           echo '${{ inputs.composer-auth }}' > auth.json
         fi
