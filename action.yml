@@ -13,7 +13,6 @@ runs:
     - name: Installing composer requirements
       shell: bash
       run: composer install
-      working-directory: ${{ github.action_path }}
     - name: Running upgrade
       id: upgrade
       shell: bash
