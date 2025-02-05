@@ -3,6 +3,9 @@ author: discoverygarden
 description: Updates composer with latest versions of discoverygarden modules.
 
 inputs:
+  composer-auth:
+    description: 'Composer auth token necessary for accessing our composer project.'
+    required: false
   github-token:
     description: The github token.
     required: true
@@ -12,7 +15,12 @@ runs:
   steps:
     - name: Installing composer requirements
       shell: bash
-      run: composer install
+      run: |
+        # Configure access and install our module.
+        if [ -n "${{ inputs.composer-auth }}" ] ; then
+          echo '${{ inputs.composer-auth }}' > auth.json
+        fi
+        composer install
     - name: Running upgrade
       id: upgrade
       shell: bash
