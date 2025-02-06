@@ -45,12 +45,12 @@ runs:
         git add composer.*
         git commit -m 'Updating discoverygarden modules with latest tags'
         git push origin fix/update-composer
-    - name: Create PR
-      if: steps.commit.outcome == 'success'
-      uses: discoverygarden/create-pr@v1
-      with:
-        title: "Updating composer modules"
-        base: fix/update-composer
-        head: main
-        automerge: false
-        token: ${{ inputs.github-token }}
+#    - name: Create PR
+#      if: steps.commit.outcome == 'success'
+#      uses: discoverygarden/create-pr@v1
+#      with:
+#        title: "Updating composer modules"
+#        base: fix/update-composer
+#        head: main
+#        automerge: false
+#        token: ${{ inputs.github-token }}
