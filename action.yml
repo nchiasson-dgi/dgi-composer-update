@@ -39,6 +39,8 @@ runs:
       if: env.UPDATES == 'true'
       shell: bash
       run: |
+        git config --global user.name "Github actions"
+        git config --global user.email "noreply+githubactions@discoverygarden.ca"
         git switch --create fix/update-composer
         git add composer.*
         git commit -m 'Updating discoverygarden modules with latest tags'
